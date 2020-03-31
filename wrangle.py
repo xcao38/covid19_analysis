@@ -29,3 +29,68 @@ def get_population_data():
     url = "https://www2.census.gov/programs-surveys/popest/datasets/2010-2019/state/detail/SCPRC-EST2019-18+POP-RES.csv"
     df = pd.read_csv(url)
     return df
+
+
+def get_gdp_by_states(data_dir):
+    gdp_df = tabula.read_pdf(data_dir, pages = 7)
+    gdp_df = gdp_df[0].iloc[3:,[0,1,2,3,4]]
+    gdp_df = pd.concat([gdp_df,gdp_df["Millions of dollars"].str.split(" ",expand = True)],axis=1)
+    gdp_df = gdp_df.drop(columns=["Millions of dollars","Unnamed: 3",5,6,7,8])
+    gdp_df.columns = ["areas","2018-1","2018-2","2018-3","2018-4","2019-1","2019-2","2019-3"]
+    gdp_df = gdp_df.reset_index(drop=True)
+    
+    return gdp_df
+
+
+def get_gdp_pct_by_states_by_inds(data_dir):
+    
+    # part 1
+    gdp_by_state_by_inds_p1 = tabula.read_pdf(data_dir,pages = 5)
+    gdp_by_state_by_inds_p1 = gdp_by_state_by_inds_p1[0]
+    gdp_by_state_by_inds_p1 = gdp_by_state_by_inds_p1.dropna(axis=0, how='all').dropna(axis=1, how='all')
+    gdp_by_state_by_inds_p1 = gdp_by_state_by_inds_p1.loc[5:]
+    gdp_by_state_by_inds_p1 = pd.concat([gdp_by_state_by_inds_p1,gdp_by_state_by_inds_p1[
+                                            'Seasonally adjusted at annual rates'].str.split(" ", expand=True)], axis=1)
+    gdp_by_state_by_inds_p1 = gdp_by_state_by_inds_p1.drop(columns=['Seasonally adjusted at annual rates'])
+    gdp_by_state_by_inds_p1 = pd.concat([gdp_by_state_by_inds_p1,gdp_by_state_by_inds_p1[
+                                            'Unnamed: 8'].str.split(" ", expand=True)], axis=1)
+    gdp_by_state_by_inds_p1 = gdp_by_state_by_inds_p1.drop(columns=['Unnamed: 8'])
+    cols = ["areas", "states_overall","Agriculture,forestry, fishing insuranceand hunting", 
+            "Mining,quarrying, and oil and gas extraction","Utilities","Construction", 
+            "Retail trade","Transportation and warehousing","Durable goods manufacturing",
+            "Nondurable goods manufacturing", "Wholesale trade", "Information", 
+            "Finance and insurance"]
+    gdp_by_state_by_inds_p1.columns = cols
+    gdp_by_state_by_inds_p1 = gdp_by_state_by_inds_p1.reset_index(drop=True)
+
+    #part 2
+    gdp_by_state_by_inds_p2 = tabula.read_pdf(data_dir, pages = 6)
+
+    gdp_by_state_by_inds_p2 = gdp_by_state_by_inds_p2[0]
+    gdp_by_state_by_inds_p2 = gdp_by_state_by_inds_p2[2:]
+
+    gdp_by_state_by_inds_p2[["Real estate and rental and leasing",
+                      "Professional, scientific, and technical services"]] = gdp_by_state_by_inds_p2["Unnamed: 1"].str.split(" ",expand = True)
+
+    gdp_by_state_by_inds_p2[["Educational services",
+                      "Health care and social assistance"]] = gdp_by_state_by_inds_p2[
+                                                            "Seasonally adjusted at annual rates"
+                                                                                  ].str.split(" ", expand = True)
+    gdp_by_state_by_inds_p2[["Other services (except government and government enterprises)",
+                      "Government and government enterprises"]] = gdp_by_state_by_inds_p2["Unnamed: 14"].str.split(" ", expand = True)
+    gdp_by_state_by_inds_p2 = gdp_by_state_by_inds_p2.drop(
+                        columns= ["Unnamed: 1","Unnamed: 14","Seasonally adjusted at annual rates"])
+    gdp_by_state_by_inds_p2 = gdp_by_state_by_inds_p2.dropna(axis=1)
+    name_dic = {"Unnamed: 0":"areas",
+                "Unnamed: 2":"Management of companies and enterprises",
+                "Unnamed: 5":"Administrative and support and waste management and remediation services",
+                "Unnamed: 9":"Arts, entertainment, and recreation", 
+                "Unnamed: 11":"Accomodation and food services"}
+    gdp_by_state_by_inds_p2 = gdp_by_state_by_inds_p2.rename(columns=name_dic)
+    gdp_by_state_by_inds_p2 = gdp_by_state_by_inds_p2.reset_index(drop=True)
+    # JOIN
+    gdp_by_state_by_inds = pd.concat([gdp_by_state_by_inds_p1,gdp_by_state_by_inds_p2], axis = 1,)
+    gdp_by_state_by_inds.columns = gdp_by_state_by_inds.columns.str.replace(
+                                                "\)|\(|,| ","_").str.replace("__","_").str.lower()
+    gdp_by_state_by_inds = gdp_by_state_by_inds.iloc[:,~gdp_by_state_by_inds.columns.duplicated()]
+    return gdp_by_state_by_inds
