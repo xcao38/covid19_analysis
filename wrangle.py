@@ -26,6 +26,20 @@ def get_nj_employment():
     return employment_nj
 
 
+def get_ca_employment():
+    ca_dir = os.path.join(os.getcwd(),"data/ca_employment.xlsx")
+    employment_ca = pd.read_excel(ca_dir,sheet_name=0).dropna(axis=0, how="all").dropna(axis=0,how="all").loc[4:273]
+    employment_ca.columns = ['naics_1',"naics_code_2","industry","2019","2021","net_change","pct_change"]
+    employment_ca = employment_ca.reset_index(drop = True)
+    return employment_ca
+
+
+def get_pa_employment():
+    pa_dir = os.path.join(os.getcwd(),"data/pa_employment.xlsx")
+    employment_pa = pd.read_excel(pa_dir,sheet_name=0).dropna(axis=0, how="all").dropna(axis=0,how="all")
+    employment_pa = employment_pa.loc[5:120].drop(columns = "Unnamed: 6")
+    employment_pa.columns = ["naics_code","industry","2019","2021","net_change","pct_change"]
+    return employment_pa
 
 
 def get_covid_data(date):
