@@ -4,7 +4,7 @@ import pandas as pd
  
 
 def get_ny_employment():
-	employment_ny = pd.read_excel(os.path.join(os.getcwd(), "data/2019-2021-Statewide-Short-Term-Industry-Projections.xlsx"))
+	employment_ny = pd.read_excel(os.path.join(os.getcwd(), "data/ny_employment.xlsx"))
 	employment_ny = employment_ny.dropna(axis=1,how='all')
 	employment_ny = employment_ny.dropna(axis=0, how="any").reset_index(drop = True)
 	employment_ny.columns = ["naics_code","industry","2019","2021","net_change","pct_change"]
@@ -16,6 +16,16 @@ def get_ny_employment():
 	employment_ny_inds = employment_ny[employment_ny.naics_code.isin(industry_codes)]
 
 	return employment_ny_inds
+
+
+def get_nj_employment():
+    nj_dir = os.path.join(os.getcwd(),"data/nj_employment.xlsx")
+    employment_nj = pd.read_excel(nj_dir,sheet_name=0).dropna(axis=0, how="all").dropna(axis=0,how="all").loc[4:22]
+    employment_nj.columns = ["industry","2016","2026","net_change","pct_change"]
+    employment_nj = employment_nj.reset_index(drop = True)
+    return employment_nj
+
+
 
 
 def get_covid_data(date):
