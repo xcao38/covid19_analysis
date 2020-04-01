@@ -1,6 +1,6 @@
 # covid19_analysis
 
-Save lifes or save economy? A quesiton that most people in the United States are asking right now beceuse of the reopen economy plan from the White House. How much of our economy will be hit? How would the crisis go? In this Covid-19 analysi, we are trying to answer 3 key questions:
+Save lives or save economy? A quesiton that most people in the United States are asking right now beceuse of the reopen economy plan from the White House. How much of our economy will be hit? How would the crisis go? In this Covid-19 analysis, we are trying to answer 3 key questions:
 
 - rough estimates of deterioration to GDP due to quarantining for different periods of time?
 
