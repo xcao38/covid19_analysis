@@ -4,42 +4,69 @@ import pandas as pd
  
 
 def get_ny_employment():
-	employment_ny = pd.read_excel(os.path.join(os.getcwd(), "data/ny_employment.xlsx"))
-	employment_ny = employment_ny.dropna(axis=1,how='all')
-	employment_ny = employment_ny.dropna(axis=0, how="any").reset_index(drop = True)
-	employment_ny.columns = ["naics_code","industry","2019","2021","net_change","pct_change"]
-	employment_ny.naics_code = employment_ny.naics_code.astype(int)
-	employment_ny['2019'] = employment_ny['2019'].astype(int)
-	employment_ny['2021'] = employment_ny['2021'].astype(int)
+	employment = pd.read_excel(os.path.join(os.getcwd(), "data/ny_employment.xlsx"))
+	employment = employment.dropna(axis=1,how='all')
+	employment = employment.dropna(axis=0, how="any").reset_index(drop = True)
+	employment.columns = ["naics_code","industry","2019","2021","net_change","pct_change"]
+	employment.naics_code = employment.naics_code.astype(int)
+	employment['2019'] = employment['2019'].astype(int)
+	employment['2021'] = employment['2021'].astype(int)
 	industry_codes = [601,11,21,22,23,31,42,44,48,51,1023,1024,61,62,71,72,81,9,]
 
-	employment_ny_inds = employment_ny[employment_ny.naics_code.isin(industry_codes)]
+	employment_inds = employment[employment.naics_code.isin(industry_codes)]
 
-	return employment_ny_inds
+	return employment_inds
 
 
 def get_nj_employment():
     nj_dir = os.path.join(os.getcwd(),"data/nj_employment.xlsx")
-    employment_nj = pd.read_excel(nj_dir,sheet_name=0).dropna(axis=0, how="all").dropna(axis=0,how="all").loc[4:22]
-    employment_nj.columns = ["industry","2016","2026","net_change","pct_change"]
-    employment_nj = employment_nj.reset_index(drop = True)
-    return employment_nj
+    employment = pd.read_excel(nj_dir,sheet_name=0).dropna(axis=0, how="all").dropna(axis=0,how="all").loc[4:22]
+    employment.columns = ["industry","2016","2026","net_change","pct_change"]
+    employment = employment.reset_index(drop = True)
+    return employment
 
 
 def get_ca_employment():
     ca_dir = os.path.join(os.getcwd(),"data/ca_employment.xlsx")
-    employment_ca = pd.read_excel(ca_dir,sheet_name=0).dropna(axis=0, how="all").dropna(axis=0,how="all").loc[4:273]
-    employment_ca.columns = ['naics_1',"naics_code_2","industry","2019","2021","net_change","pct_change"]
-    employment_ca = employment_ca.reset_index(drop = True)
-    return employment_ca
+    employment = pd.read_excel(ca_dir,sheet_name=0).dropna(axis=0, how="all").dropna(axis=0,how="all").loc[4:273]
+    employment.columns = ['naics_1',"naics_code_2","industry","2019","2021","net_change","pct_change"]
+    employment = employment.reset_index(drop = True)
+    return employment
 
 
 def get_pa_employment():
     pa_dir = os.path.join(os.getcwd(),"data/pa_employment.xlsx")
-    employment_pa = pd.read_excel(pa_dir,sheet_name=0).dropna(axis=0, how="all").dropna(axis=0,how="all")
-    employment_pa = employment_pa.loc[5:120].drop(columns = "Unnamed: 6")
-    employment_pa.columns = ["naics_code","industry","2019","2021","net_change","pct_change"]
-    return employment_pa
+    employment = pd.read_excel(pa_dir,sheet_name=0).dropna(axis=0, how="all").dropna(axis=0,how="all")
+    employment = employment.loc[5:120].drop(columns = "Unnamed: 6")
+    employment.columns = ["naics_code","industry","2019","2021","net_change","pct_change"]
+    return employment
+
+
+def get_az_employment():
+    az_dir = os.path.join(os.getcwd(),"data/az_employment.xlsx")
+    employment = pd.read_excel(az_dir,sheet_name=0).dropna(axis=0, how="all").dropna(axis=0,how="all")
+    employment = employment.iloc[2:110,[0,1,2,3]]
+    employment.columns = ["naics_code","industry","2019","2021",]
+    employment = employment.reset_index()
+    return employment
+
+
+def get_wa_employment():
+    wa_dir = os.path.join(os.getcwd(),"data/wa_employment.xlsx")
+    employment = pd.read_excel(wa_dir,sheet_name="Washington State").dropna(axis=0, how="all").dropna(axis=0,how="all")
+    employment = employment.loc[4:]
+    employment.columns = ["industry","2019","2021","pct_change"]
+    employment = employment.reset_index(drop = True)
+    return employment
+
+
+def get_nc_employment():
+    nc_dir = os.path.join(os.getcwd(),"data/nc_employment.xlsx")
+    employment = pd.read_excel(nc_dir,sheet_name="Public 2019-2021, ALL").dropna(axis=0, how="all").dropna(axis=0,how="all")
+    employment = employment.iloc[2:133,[0,1,2,3,4,5]]
+    employment.columns = ["naics_code","industry","industry_lvl","2019","2021","net_change"]
+    employment = employment.reset_index(drop = True)
+    return employment
 
 
 def get_covid_data(date):
@@ -48,6 +75,17 @@ def get_covid_data(date):
     covid19_df = covid19_df.reset_index()
     covid19_df = covid19_df[covid19_df["Country_Region"] == "US"]
     return covid19_df
+
+
+def get_ok_employment():
+    dir_ = os.path.join(os.getcwd(),"data/ok_employment.xlsx")
+    employment = pd.read_excel(dir_,sheet_name="Industry").dropna(axis=0, how="all").dropna(axis=0,how="all")
+    employment = employment.loc[3:146]
+    employment.columns = ["industry","2019","2021","net_change","pct_change"]
+    employment = employment.reset_index(drop = True)
+    return employment
+
+    
 
 
 def get_population_data():
